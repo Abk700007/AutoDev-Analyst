@@ -36,7 +36,7 @@ def analyze_code(repo_dir):
 
     return report
 
-def save_report(report, output_file="report.json"):
+def save_report(report, output_file="cline-agent/report.json"):
     with open(output_file, "w") as f:
         json.dump(report, f, indent=4)
 
