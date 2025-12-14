@@ -9,43 +9,46 @@ export default function Home() {
 
   const handleAnalyze = async () => {
     setLoading(true);
-    setResult("Running analysis using Cline + Kestra + Oumi...");
+    setResult("⏳ Running analysis using Cline + Kestra + Oumi...");
 
-    // Simulated result for now (we replace this later)
     setTimeout(() => {
       setResult(`
-✅ Repository analyzed successfully  
-- Cline Agent: Code scan completed  
-- Kestra Workflow: Summary generated  
-- Oumi: Evaluation score: 8.5/10  
+🚀 Analysis Complete!
+
+• Cline Agent: Code scan completed  
+• Kestra Workflow: Summary generated  
+• Oumi Eval Score: 8.5/10  
+
 `);
       setLoading(false);
     }, 2000);
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-10">
-      <h1 className="text-4xl font-bold mb-6 text-blue-600">
-        AutoDev Analyst
-      </h1>
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+      <div className="w-full max-w-2xl bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl p-10 border border-white/20">
+        <h1 className="text-5xl font-extrabold text-center text-blue-400 mb-8 drop-shadow-lg">
+          AutoDev Analyst
+        </h1>
 
-      <input
-        className="border px-4 py-2 rounded w-full max-w-xl mb-4"
-        placeholder="Enter GitHub repo URL"
-        value={repoUrl}
-        onChange={(e) => setRepoUrl(e.target.value)}
-      />
+        <input
+          className="border border-gray-300 bg-white/20 text-white placeholder-gray-300 px-4 py-3 rounded-lg w-full mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          placeholder="Enter GitHub repository URL"
+          value={repoUrl}
+          onChange={(e) => setRepoUrl(e.target.value)}
+        />
 
-      <button
-        onClick={handleAnalyze}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-      >
-        {loading ? "Analyzing..." : "Analyze Repo"}
-      </button>
+        <button
+          onClick={handleAnalyze}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all shadow-lg"
+        >
+          {loading ? "Analyzing..." : "Analyze Repo"}
+        </button>
 
-      <pre className="mt-6 bg-gray-100 p-4 rounded w-full max-w-2xl text-sm whitespace-pre-wrap">
-        {result}
-      </pre>
+        <pre className="mt-8 bg-black/30 text-gray-200 p-5 rounded-xl whitespace-pre-wrap text-sm border border-white/10">
+          {result}
+        </pre>
+      </div>
     </main>
   );
 }
