@@ -109,13 +109,31 @@ ${sampleFiles}
   return (
     <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-      {/* Floating Particles Canvas */}
+      {/* Floating Particles */}
       <canvas
         id="particles"
         className="absolute inset-0 z-0 opacity-40"
       ></canvas>
 
-      {/* Gradient Glow Background */}
+      {/* AI BACKGROUND WAVES */}
+      <div className="absolute inset-0 z-0 overflow-hidden opacity-40 pointer-events-none">
+        <svg className="absolute bottom-0 w-[300%] animate-waveSlow" viewBox="0 0 1200 120">
+          <path
+            d="M0,0 C150,100 450,-100 600,0 C750,100 1050,-100 1200,0 L1200,120 L0,120 Z"
+            fill="url(#grad1)"
+            opacity="0.35"
+          ></path>
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#2dd4bf" />
+              <stop offset="50%" stopColor="#3b82f6" />
+              <stop offset="100%" stopColor="#8b5cf6" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* Gradient Glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800"></div>
       <div className="absolute w-[700px] h-[700px] bg-blue-600/20 blur-3xl rounded-full -top-40 -left-40"></div>
       <div className="absolute w-[600px] h-[600px] bg-purple-600/20 blur-3xl rounded-full bottom-0 right-0"></div>
@@ -135,7 +153,7 @@ ${sampleFiles}
           onChange={(e) => setRepoUrl(e.target.value)}
         />
 
-        {/* BUTTON WITH LOADING ANIMATION */}
+        {/* BUTTON */}
         <button
           onClick={handleAnalyze}
           disabled={loading}
@@ -183,6 +201,14 @@ ${sampleFiles}
         }
         .animate-fadeInSlow {
           animation: fadeInSlow 1.2s ease-out;
+        }
+
+        @keyframes waveSlow {
+          from { transform: translateX(0); }
+          to { transform: translateX(-33.3%); }
+        }
+        .animate-waveSlow {
+          animation: waveSlow 12s linear infinite;
         }
       `}</style>
     </main>
