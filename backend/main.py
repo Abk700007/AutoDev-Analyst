@@ -6,7 +6,6 @@ import os
 
 app = FastAPI()
 
-# Allow frontend to call backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,36 +20,37 @@ async def analyze_repo(data: dict):
     if not repo_url:
         return {"error": "Missing repo URL"}
 
-    # 1. Run Cline agent script
+    # 1. Determine correct absolute path to agent.py
+    agent_path = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "cline-agent", "agent.py")
+    )
+
+    print(f"Running agent from: {agent_path}")
+
+    # 2. Run Cline agent with absolute path
     try:
-        print("Running Cline agent...")
         subprocess.run(
-            ["python3", "cline-agent/agent.py"],
+            ["python3", agent_path],
             input=f"{repo_url}\n".encode(),
             timeout=120
         )
     except Exception as e:
         return {"error": f"Failed to run Cline agent: {e}"}
 
-    # 2. Path to report.json (absolute)
+    # 3. Determine correct absolute path to report.json
     report_path = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__), "..", "cline-agent", "report.json"
-        )
+        os.path.join(os.path.dirname(__file__), "..", "cline-agent", "report.json")
     )
 
-    # Check if report.json exists
+    print(f"Looking for report.json at: {report_path}")
+
     if not os.path.exists(report_path):
         return {"error": f"report.json not found at {report_path}"}
 
-    # Load report.json
     with open(report_path, "r") as f:
         report_data = json.load(f)
 
-    # 3. Dummy Kestra summary (we'll upgrade later)
     kestra_summary = f"Analyzed {len(report_data.get('files', []))} files."
-
-    # 4. Dummy Oumi score
     oumi_score = "8.2/10 (simulated)"
 
     return {
