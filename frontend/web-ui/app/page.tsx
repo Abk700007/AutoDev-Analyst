@@ -8,21 +8,52 @@ export default function Home() {
   const [result, setResult] = useState("");
 
   const handleAnalyze = async () => {
-    setLoading(true);
-    setResult("⏳ Running analysis using Cline + Kestra + Oumi...");
+  if (!repoUrl) return;
 
-    setTimeout(() => {
-      setResult(`
+  setLoading(true);
+  setResult("⏳ Running full pipeline…\nCloning → Scanning → Summarizing…");
+
+  try {
+    const res = await fetch("https://autodev-analyst.onrender.com/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ repoUrl }),
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      setResult("❌ ERROR:\n" + data.error);
+    } else {
+      setResult(
+        `
 🚀 Analysis Complete!
 
-• Cline Agent: Code scan completed  
-• Kestra Workflow: Summary generated  
-• Oumi Eval Score: 8.5/10  
+📦 Repository: ${data.repo}
 
-`);
-      setLoading(false);
-    }, 2000);
-  };
+📊 Files Analyzed: ${data.cline_output.files.length}
+📝 Summary: ${data.cline_output.summary}
+
+⚙️ Kestra Workflow:
+${data.kestra_summary}
+
+🧠 Oumi Score:
+${data.oumi_score}
+
+📂 Sample Files:
+${data.cline_output.files.slice(0, 5).map(f => `• ${f.path}`).join("\n")}
+        `
+      );
+    }
+  } catch (err) {
+    setResult("❌ Network error: " + err);
+  }
+
+  setLoading(false);
+};
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
