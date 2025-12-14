@@ -16,7 +16,7 @@ It integrates modern tools including:
 
 ## 🚀 Live Demo
 
- [https://auto-dev-analyst-r640ohjfd-abhiranjan-kumars-projects.vercel.app/](https://auto-dev-analyst-r640ohjfd-abhiranjan-kumars-projects.vercel.app/)
+ [https://auto-dev-analyst-r640ohjfd-abhiranjan-kumars-projects.vercel.app/](https://auto-dev-analyst.vercel.app/)
 
 ---
 
