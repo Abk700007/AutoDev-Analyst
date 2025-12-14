@@ -3,13 +3,17 @@ import subprocess
 import json
 from pathlib import Path
 
-def clone_repo(repo_url, clone_dir="cline-agent/repo"):
-    # Ensure repo folder exists inside cline-agent
-    if os.path.exists(clone_dir):
-        subprocess.run(["rm", "-rf", clone_dir])
+# repo root = backend folder's parent
+ROOT = Path(__file__).resolve().parent.parent  
+AGENT_DIR = ROOT / "cline-agent"
+REPO_DIR = AGENT_DIR / "repo"
+REPORT_PATH = AGENT_DIR / "report.json"
 
-    subprocess.run(["git", "clone", repo_url, clone_dir])
-    return clone_dir
+def clone_repo(repo_url):
+    if REPO_DIR.exists():
+        subprocess.run(["rm", "-rf", str(REPO_DIR)])
+    subprocess.run(["git", "clone", repo_url, str(REPO_DIR)])
+    return str(REPO_DIR)
 
 def analyze_code(repo_dir):
     report = {
@@ -31,29 +35,20 @@ def analyze_code(repo_dir):
                 })
 
     report["summary"] = f"Analyzed {len(report['files'])} source files."
-    report["issues"] = [
-        "Static analysis not yet implemented.",
-        "AI-driven improvements to be added in next versions."
-    ]
+    report["issues"] = ["Static analysis TBD."]
 
     return report
 
-def save_report(report, output_file="cline-agent/report.json"):
-    with open(output_file, "w") as f:
+def save_report(report):
+    with open(REPORT_PATH, "w") as f:
         json.dump(report, f, indent=4)
 
 def main():
     repo_url = input().strip()
-    print("Cloning repository...")
     repo_dir = clone_repo(repo_url)
-
-    print("Analyzing repository...")
     report = analyze_code(repo_dir)
-
-    print("Saving output JSON...")
     save_report(report)
-
-    print("Done!")
+    print("Saved:", REPORT_PATH)
 
 if __name__ == "__main__":
     main()
