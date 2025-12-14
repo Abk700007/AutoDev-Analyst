@@ -7,54 +7,57 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
 
+  // -----------------------------
+  // MAIN PIPELINE FUNCTION
+  // -----------------------------
   const handleAnalyze = async () => {
-  if (!repoUrl) return;
+    if (!repoUrl) return;
 
-  setLoading(true);
-  setResult("⏳ Running full pipeline…\nCloning → Scanning → Summarizing…");
+    setLoading(true);
+    setResult("⏳ Running full pipeline...\nCloning → Scanning → Summarizing...");
 
-  try {
-    const res = await fetch("https://autodev-analyst.onrender.com/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ repoUrl }),
-    });
+    try {
+      const res = await fetch("https://autodev-analyst.onrender.com/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ repoUrl }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (data.error) {
-      setResult("❌ ERROR:\n" + data.error);
-    } else {
-      setResult(
-        `
-🚀 Analysis Complete!
+      if (data.error) {
+        setResult("❌ ERROR:\n" + data.error);
+      } else {
+        // Safe sample file list
+        const sampleFiles = data.cline_output.files
+          .slice(0, 5)
+          .map((f: any) => "• " + f.path)
+          .join("\n");
 
-📦 Repository: ${data.repo}
+        // Build output text
+        const output =
+          "🚀 Analysis Complete!\n\n" +
+          "📦 Repository: " + data.repo + "\n\n" +
+          "📊 Files Analyzed: " + data.cline_output.files.length + "\n" +
+          "📝 Summary: " + data.cline_output.summary + "\n\n" +
+          "⚙️ Kestra Workflow:\n" + data.kestra_summary + "\n\n" +
+          "🧠 Oumi Score:\n" + data.oumi_score + "\n\n" +
+          "📂 Sample Files:\n" + sampleFiles;
 
-📊 Files Analyzed: ${data.cline_output.files.length}
-📝 Summary: ${data.cline_output.summary}
-
-⚙️ Kestra Workflow:
-${data.kestra_summary}
-
-🧠 Oumi Score:
-${data.oumi_score}
-
-📂 Sample Files:
-${data.cline_output.files.slice(0, 5).map(f => `• ${f.path}`).join("\n")}
-        `
-      );
+        setResult(output);
+      }
+    } catch (err: any) {
+      setResult("❌ Network error: " + err.message);
     }
-  } catch (err) {
-    setResult("❌ Network error: " + err);
-  }
 
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
-
+  // -----------------------------
+  // UI LAYOUT
+  // -----------------------------
   return (
     <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
       <div className="w-full max-w-2xl bg-white/10 backdrop-blur-lg shadow-2xl rounded-2xl p-10 border border-white/20">
