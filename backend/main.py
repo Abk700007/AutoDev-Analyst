@@ -23,24 +23,27 @@ async def analyze_repo(data: dict):
     # 1. Run Cline agent
     try:
         print("Running Cline agent...")
-        subprocess.run(["python3", "cline-agent/agent.py"],
-            input=repo_url.encode(),
+        subprocess.run(
+            ["python3", "cline-agent/agent.py"],
+            input=f"{repo_url}\n".encode(),
             timeout=120
         )
     except Exception as e:
         return {"error": f"Failed to run Cline agent: {e}"}
 
-    # 2. Load report.json
-    if not os.path.exists("cline-agent/repo/report.json"):
-        return {"error": "report.json not found"}
+    # 2. Load REAL report.json from cline-agent folder
+    report_path = "cline-agent/report.json"
 
-    with open("report.json", "r") as f:
+    if not os.path.exists(report_path):
+        return {"error": f"report.json not found at {report_path}"}
+
+    with open(report_path, "r") as f:
         report_data = json.load(f)
 
-    # 3. Simulated Kestra workflow call (we can make real call later)
+    # 3. Kestra workflow (placeholder)
     kestra_summary = f"Analyzed {len(report_data.get('files', []))} files."
 
-    # 4. Oumi evaluation (will add real call soon)
+    # 4. Oumi evaluation (placeholder)
     oumi_score = "8.2/10 (simulated)"
 
     return {
