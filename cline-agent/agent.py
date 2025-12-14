@@ -3,9 +3,11 @@ import subprocess
 import json
 from pathlib import Path
 
-def clone_repo(repo_url, clone_dir="repo"):
+def clone_repo(repo_url, clone_dir="cline-agent/repo"):
+    # Ensure repo folder exists inside cline-agent
     if os.path.exists(clone_dir):
         subprocess.run(["rm", "-rf", clone_dir])
+
     subprocess.run(["git", "clone", repo_url, clone_dir])
     return clone_dir
 
@@ -41,7 +43,7 @@ def save_report(report, output_file="cline-agent/report.json"):
         json.dump(report, f, indent=4)
 
 def main():
-    repo_url = input("Enter GitHub repository URL: ")
+    repo_url = input().strip()
     print("Cloning repository...")
     repo_dir = clone_repo(repo_url)
 
@@ -51,7 +53,7 @@ def main():
     print("Saving output JSON...")
     save_report(report)
 
-    print("\nDone! Report generated: report.json")
+    print("Done!")
 
 if __name__ == "__main__":
     main()
