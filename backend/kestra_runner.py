@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 AGENT_DIR = ROOT / "cline-agent"
-WORKFLOW_FILE = ROOT / "kestra-workflows" / "repo-analysis.yaml"
+WORKFLOW_FILE = ROOT / "kestra-workflows" / "repo_analysis.yaml"
 REPORT_PATH = AGENT_DIR / "report.json"
 
 def run_kestra_workflow(repo_url):
