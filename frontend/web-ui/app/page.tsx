@@ -70,7 +70,6 @@ ${sampleFiles}
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Create 60 floating dots
     for (let i = 0; i < 60; i++) {
       particles.push({
         x: Math.random() * canvas.width,
@@ -109,14 +108,17 @@ ${sampleFiles}
   return (
     <main className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-      {/* Floating Particles */}
+      {/* 1️⃣ BACKGROUND GRADIENT (z-0 lowest) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 z-0"></div>
+
+      {/* 2️⃣ PARTICLES (z-10) */}
       <canvas
         id="particles"
-        className="absolute inset-0 z-0 opacity-40"
+        className="absolute inset-0 z-10 opacity-40"
       ></canvas>
 
-      {/* AI BACKGROUND WAVES */}
-      <div className="absolute inset-0 z-0 overflow-hidden opacity-40 pointer-events-none">
+      {/* 3️⃣ AI WAVES (z-20) */}
+      <div className="absolute inset-0 z-20 overflow-hidden opacity-40 pointer-events-none">
         <svg className="absolute bottom-0 w-[300%] animate-waveSlow" viewBox="0 0 1200 120">
           <path
             d="M0,0 C150,100 450,-100 600,0 C750,100 1050,-100 1200,0 L1200,120 L0,120 Z"
@@ -133,19 +135,17 @@ ${sampleFiles}
         </svg>
       </div>
 
-      {/* Gradient Glow */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800"></div>
-      <div className="absolute w-[700px] h-[700px] bg-blue-600/20 blur-3xl rounded-full -top-40 -left-40"></div>
-      <div className="absolute w-[600px] h-[600px] bg-purple-600/20 blur-3xl rounded-full bottom-0 right-0"></div>
+      {/* Glow blobs */}
+      <div className="absolute w-[700px] h-[700px] bg-blue-600/20 blur-3xl rounded-full -top-40 -left-40 z-0"></div>
+      <div className="absolute w-[600px] h-[600px] bg-purple-600/20 blur-3xl rounded-full bottom-0 right-0 z-0"></div>
 
-      {/* MAIN CARD */}
-      <div className="relative z-10 w-full max-w-3xl bg-white/10 backdrop-blur-xl shadow-2xl rounded-2xl p-10 border border-white/20 animate-fadeIn">
+      {/* 4️⃣ MAIN CARD (z-30 top) */}
+      <div className="relative z-30 w-full max-w-3xl bg-white/10 backdrop-blur-xl shadow-2xl rounded-2xl p-10 border border-white/20 animate-fadeIn">
 
         <h1 className="text-6xl font-extrabold text-center text-blue-400 mb-10 drop-shadow-xl tracking-wide animate-slideDown">
           AutoDev Analyst
         </h1>
 
-        {/* INPUT */}
         <input
           className="border border-white/30 bg-black/30 text-white placeholder-gray-300 px-5 py-3 rounded-xl w-full mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg"
           placeholder="Paste GitHub Repository URL…"
@@ -153,7 +153,6 @@ ${sampleFiles}
           onChange={(e) => setRepoUrl(e.target.value)}
         />
 
-        {/* BUTTON */}
         <button
           onClick={handleAnalyze}
           disabled={loading}
@@ -171,45 +170,36 @@ ${sampleFiles}
           )}
         </button>
 
-        {/* OUTPUT */}
         <pre className="mt-8 bg-black/40 p-6 rounded-xl text-gray-200 text-sm whitespace-pre-wrap border border-white/10 shadow-inner animate-fadeInSlow">
           {result}
         </pre>
       </div>
 
-      {/* Custom Animations */}
+      {/* Animations */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: scale(0.95); }
           to { opacity: 1; transform: scale(1); }
         }
-        .animate-fadeIn {
-          animation: fadeIn 0.8s ease-out;
-        }
+        .animate-fadeIn { animation: fadeIn 0.8s ease-out; }
 
         @keyframes slideDown {
           from { opacity: 0; transform: translateY(-20px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        .animate-slideDown {
-          animation: slideDown 0.9s ease-out;
-        }
+        .animate-slideDown { animation: slideDown 0.9s ease-out; }
 
         @keyframes fadeInSlow {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        .animate-fadeInSlow {
-          animation: fadeInSlow 1.2s ease-out;
-        }
+        .animate-fadeInSlow { animation: fadeInSlow 1.2s ease-out; }
 
         @keyframes waveSlow {
           from { transform: translateX(0); }
           to { transform: translateX(-33.3%); }
         }
-        .animate-waveSlow {
-          animation: waveSlow 12s linear infinite;
-        }
+        .animate-waveSlow { animation: waveSlow 12s linear infinite; }
       `}</style>
     </main>
   );
