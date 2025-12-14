@@ -14,13 +14,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.post("/analyze")
 async def analyze_repo(data: dict):
     repo_url = data.get("repoUrl")
     if not repo_url:
         return {"error": "Missing repo URL"}
 
-    # 1. Run Cline agent
+    # 1. Run Cline agent script
     try:
         print("Running Cline agent...")
         subprocess.run(
@@ -31,21 +32,25 @@ async def analyze_repo(data: dict):
     except Exception as e:
         return {"error": f"Failed to run Cline agent: {e}"}
 
-    # 2. Load REAL report.json from cline-agent folder
-   # FIXED PATH
-report_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cline-agent", "report.json"))
+    # 2. Path to report.json (absolute)
+    report_path = os.path.abspath(
+        os.path.join(
+            os.path.dirname(__file__), "..", "cline-agent", "report.json"
+        )
+    )
 
-if not os.path.exists(report_path):
-    return {"error": f"report.json not found at {report_path}"}
+    # Check if report.json exists
+    if not os.path.exists(report_path):
+        return {"error": f"report.json not found at {report_path}"}
 
-with open(report_path, "r") as f:
-    report_data = json.load(f)
+    # Load report.json
+    with open(report_path, "r") as f:
+        report_data = json.load(f)
 
-
-    # 3. Kestra workflow (placeholder)
+    # 3. Dummy Kestra summary (we'll upgrade later)
     kestra_summary = f"Analyzed {len(report_data.get('files', []))} files."
 
-    # 4. Oumi evaluation (placeholder)
+    # 4. Dummy Oumi score
     oumi_score = "8.2/10 (simulated)"
 
     return {
