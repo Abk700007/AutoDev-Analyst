@@ -32,13 +32,15 @@ async def analyze_repo(data: dict):
         return {"error": f"Failed to run Cline agent: {e}"}
 
     # 2. Load REAL report.json from cline-agent folder
-    report_path = "cline-agent/report.json"
+   # FIXED PATH
+report_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "cline-agent", "report.json"))
 
-    if not os.path.exists(report_path):
-        return {"error": f"report.json not found at {report_path}"}
+if not os.path.exists(report_path):
+    return {"error": f"report.json not found at {report_path}"}
 
-    with open(report_path, "r") as f:
-        report_data = json.load(f)
+with open(report_path, "r") as f:
+    report_data = json.load(f)
+
 
     # 3. Kestra workflow (placeholder)
     kestra_summary = f"Analyzed {len(report_data.get('files', []))} files."
