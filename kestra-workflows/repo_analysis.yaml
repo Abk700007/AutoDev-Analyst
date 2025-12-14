@@ -1,0 +1,46 @@
+id: repo_analysis_workflow
+namespace: autodev
+
+tasks:
+  - id: run_cline_agent
+    type: io.kestra.plugin.scripts.python.Script
+    script: |
+      import subprocess
+      import sys
+
+      repo_url = "{{inputs.repo_url}}"
+      print("Running Cline agent on:", repo_url)
+
+      result = subprocess.run(
+          ["python3", "cline-agent/agent.py"],
+          input=repo_url.encode(),
+          capture_output=True
+      )
+
+      print("Cline agent finished.")
+
+  - id: read_report
+    type: io.kestra.plugin.core.log.Log
+    message: "Reading Cline agent output..."
+
+  - id: load_report
+    type: io.kestra.plugin.core.keystore.Get
+    key: "report.json"
+
+  - id: ai_summary
+    type: io.kestra.plugin.ai.agents.Chat
+    provider: openai
+    model: gpt-4o-mini
+    prompt: |
+      You are a Kestra AI Agent. Summarize the following repository analysis data:
+      {{ outputs.load_report.value }}
+    output: ai_summary
+
+  - id: save_summary
+    type: io.kestra.plugin.core.keystore.Put
+    key: "repo_summary.txt"
+    value: "{{ outputs.ai_summary }}"
+    
+inputs:
+  - name: repo_url
+    type: STRING
