@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import subprocess
 import json
 import os
+
+# Import our custom Kestra workflow executor
+from kestra_runner import run_kestra_workflow
 
 app = FastAPI()
 
@@ -20,42 +22,17 @@ async def analyze_repo(data: dict):
     if not repo_url:
         return {"error": "Missing repo URL"}
 
-    # 1. Determine correct absolute path to agent.py
-    agent_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "cline-agent", "agent.py")
-    )
+    # Run full Kestra-style workflow
+    result = run_kestra_workflow(repo_url)
 
-    print(f"Running agent from: {agent_path}")
+    # If runner returned an error
+    if "error" in result:
+        return {"error": result["error"]}
 
-    # 2. Run Cline agent with absolute path
-    try:
-        subprocess.run(
-            ["python3", agent_path],
-            input=f"{repo_url}\n".encode(),
-            timeout=120
-        )
-    except Exception as e:
-        return {"error": f"Failed to run Cline agent: {e}"}
-
-    # 3. Determine correct absolute path to report.json
-    report_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "cline-agent", "report.json")
-    )
-
-    print(f"Looking for report.json at: {report_path}")
-
-    if not os.path.exists(report_path):
-        return {"error": f"report.json not found at {report_path}"}
-
-    with open(report_path, "r") as f:
-        report_data = json.load(f)
-
-    kestra_summary = f"Analyzed {len(report_data.get('files', []))} files."
-    oumi_score = "8.2/10 (simulated)"
-
+    # Build final return object
     return {
         "repo": repo_url,
-        "cline_output": report_data,
-        "kestra_summary": kestra_summary,
-        "oumi_score": oumi_score
+        "cline_output": result["report"],
+        "kestra_summary": result["kestra_summary"],
+        "oumi_score": "8.2/10 (simulated)"
     }
