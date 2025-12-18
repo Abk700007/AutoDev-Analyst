@@ -54,13 +54,7 @@ Provides a mock score (e.g., **8.2/10**) to mimic AI evaluation.
 * AI wave gradients
 * Smooth motion transitions
 * Glassmorphism card UI
-
----
-
-## 🖼 Screenshots
-
-(Add your screenshots here)
-
+  
 ---
 
 ## 🏗 Project Structure
